@@ -33,7 +33,6 @@ export const transformBasicValue = (value: string, targetUnit: conversions, conf
   }
 
   const extractNumericValue = (inputString: string) => {
-    console.log('inputString', inputString)
     const pattern = /(\-?\d+(\.\d+)?|\.\d+)/;
     const match = inputString.match(pattern);
     return match ? parseFloat(match[0]) : null;
@@ -45,8 +44,6 @@ export const transformBasicValue = (value: string, targetUnit: conversions, conf
   }
   
   const sourceUnit = getSourceUnit(value, config.lengthMatchingRules)
-
-  console.log('sourceUnit:', sourceUnit, 'targetUnit:', targetUnit)
 
   if (targetUnit === 'skip' || !sourceUnit) return value
 
