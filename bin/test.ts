@@ -19,9 +19,20 @@ test('trasform basic values', () => {
     ...basicConfig, 
     lengthMatchingRules: {
       ...basicConfig.lengthMatchingRules,
-      'px': "to-rem\\((\\-?\\d+(\\.\\d+)?|\\.\\d+)px\\)"
+      'px': "(\\-?\\d+(\\.\\d+)?|\\.\\d+)px|to-rem\\((\\-?\\d+(\\.\\d+)?|\\.\\d+)px\\)"
     }}
   
+  expect(transformBasicValue('0px', 'rem')).toBe('0rem');
+  expect(transformBasicValue('0px', 'px')).toBe('0px');
+  expect(transformBasicValue('16px', 'rem')).toBe('1rem');
+  expect(transformBasicValue('-16px', 'rem')).toBe('-1rem');
+  expect(transformBasicValue('-15px', 'rem')).toBe('-1rem');
+  expect(transformBasicValue('1px', 'px')).toBe('1px');
+  expect(transformBasicValue('0.125rem', 'px')).toBe('2px');
+  expect(transformBasicValue('-0.125rem', 'px')).toBe('-2px');
+  expect(transformBasicValue('.125rem', 'px')).toBe('2px');
+  expect(transformBasicValue('1.6px', 'px')).toBe('2px');
+  expect(transformBasicValue('1.5px', 'px')).toBe('2px');
   expect(transformBasicValue('to-rem(16px)', 'px', newConfigWithCustomRegex)).toBe('16px');
   expect(transformBasicValue('to-rem(16px)', 'rem', newConfigWithCustomRegex)).toBe('1rem');
   expect(transformBasicValue('to-rem(-16px)', 'px', newConfigWithCustomRegex)).toBe('-16px');
@@ -55,9 +66,13 @@ test('trasform complex values', () => {
     ...basicConfig, 
     lengthMatchingRules: {
       ...basicConfig.lengthMatchingRules,
-      'px': "to-rem\\((\\-?\\d+(\\.\\d+)?|\\.\\d+)px\\)"
+      'px': "(\\-?\\d+(\\.\\d+)?|\\.\\d+)px|to-rem\\((\\-?\\d+(\\.\\d+)?|\\.\\d+)px\\)"
     }}
 
+  expect(transformComplexValue('width', '16px;', basicConfig)).toBe('1rem;');
+  expect(transformComplexValue('border', '0.0625rem 0.0625rem 0.0625rem 0.0625rem;', basicConfig)).toBe('1px 1px 1px 1px;');
+  expect(transformComplexValue('border', '1px 0.0625rem 1px 0.0625rem;', basicConfig)).toBe('1px 1px 1px 1px;');
+  expect(transformComplexValue('border', '1px 0.0625rem 1px 0.0625rem;', basicConfig)).toBe('1px 1px 1px 1px;');
   expect(transformComplexValue('width', 'to-rem(16px);', newConfig)).toBe('1rem;');
   expect(transformComplexValue('width', 'to-rem(-16px);', newConfig)).toBe('-1rem;');
   expect(transformComplexValue('padding', 'to-rem(4px) to-rem(8px) to-rem(16px) to-rem(32px);', newConfig)).toBe('4px 8px 16px 32px;')

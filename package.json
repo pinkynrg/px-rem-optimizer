@@ -12,7 +12,7 @@
     "prestart": "npm run build",
     "start": "ts-node-script bin/index.ts",
     "start-build": "node dist/index.js",
-    "test": "jest"
+    "test": "jest ./bin"
   },
   "repository": {
     "type": "git",

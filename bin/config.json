@@ -5,7 +5,7 @@
     "roundUpOnTie": true
   },
   "lengthMatchingRules": {
-    "px": "(\\-?\\d+(\\.\\d+)?|\\.\\d+)px",
+    "px": "(\\-?\\d+(\\.\\d+)?|\\.\\d+)px|to-rem\\((\\-?\\d+(\\.\\d+)?|\\.\\d+)px\\)",
     "rem": "(\\-?\\d+(\\.\\d+)?|\\.\\d+)rem"
   },
   "properties": {
