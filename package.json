@@ -9,7 +9,6 @@
   "scripts": {
     "build": "npx tsc",
     "postbuild": "node scripts/postbuild.js",
-    "prestart": "npm run build",
     "start": "ts-node-script bin/index.ts",
     "start-build": "node dist/index.js",
     "test": "jest ./bin"
