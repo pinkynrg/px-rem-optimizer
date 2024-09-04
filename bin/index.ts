@@ -137,39 +137,39 @@ const transformCSSFileContent = (cssContent: string, config = basicConfig): stri
 };
 
 
-// const traverseDirectory = (directory: string) => {
-//   fs.readdirSync(directory).forEach((file) => {
-//     const fullPath = path.join(directory, file)
-//     const stat = fs.statSync(fullPath)
+const traverseDirectory = (directory: string) => {
+  fs.readdirSync(directory).forEach((file) => {
+    const fullPath = path.join(directory, file)
+    const stat = fs.statSync(fullPath)
 
-//     if (stat.isDirectory()) {
-//       traverseDirectory(fullPath)
-//     } else if (stat.isFile()) {
-//       // Only transform .css and .scss files
-//       if (fullPath.endsWith('.css') || fullPath.endsWith('.scss')) {
-//         const content = fs.readFileSync(fullPath, 'utf8')
-//         const transformedContent = transformCSSFileContent(content, basicConfig)
-//         if (content !== transformedContent) {
-//           fs.writeFileSync(fullPath, transformedContent, 'utf8')
-//           console.log(`Transformed: ${fullPath}`)
-//         }
-//       }
-//     }
-//   })
-// }
+    if (stat.isDirectory()) {
+      traverseDirectory(fullPath)
+    } else if (stat.isFile()) {
+      // Only transform .css and .scss files
+      if (fullPath.endsWith('.css') || fullPath.endsWith('.scss')) {
+        const content = fs.readFileSync(fullPath, 'utf8')
+        const transformedContent = transformCSSFileContent(content, basicConfig)
+        if (content !== transformedContent) {
+          fs.writeFileSync(fullPath, transformedContent, 'utf8')
+          console.log(`Transformed: ${fullPath}`)
+        }
+      }
+    }
+  })
+}
 
-// const folder = process.argv[2]
+const folder = process.argv[2]
 
-// if (!folder) {
-//   console.error('Please provide a folder path.')
-//   process.exit(1)
-// }
+if (!folder) {
+  console.error('Please provide a folder path.')
+  process.exit(1)
+}
 
-// const fullFolderPath = path.resolve(folder)
+const fullFolderPath = path.resolve(folder)
 
-// if (!fs.existsSync(fullFolderPath) || !fs.statSync(fullFolderPath).isDirectory()) {
-//   console.error('The provided path is not a valid directory.')
-//   process.exit(1)
-// }
+if (!fs.existsSync(fullFolderPath) || !fs.statSync(fullFolderPath).isDirectory()) {
+  console.error('The provided path is not a valid directory.')
+  process.exit(1)
+}
 
-// traverseDirectory(fullFolderPath)
+traverseDirectory(fullFolderPath)
