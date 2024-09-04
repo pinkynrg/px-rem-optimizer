@@ -90,7 +90,7 @@ export const transformComplexValue = (property: string, value: string, config: t
   if (!targetUnit) return value;
 
   // Iterate over each unit type (px, rem) defined in lengthMatchingRules
-  for (const [unit, regexStr] of Object.entries(config.lengthMatchingRules)) {
+  for (const [_, regexStr] of Object.entries(config.lengthMatchingRules)) {
     const regex = new RegExp(regexStr, 'g'); // Create a global regex to match all instances in the value string
 
     // Replace each matching instance in the value using the transformBasicValue
@@ -113,7 +113,7 @@ const transformCSSFileContent = (cssContent: string, config = basicConfig): stri
 
         for (const property in styles) {
           if (styles.hasOwnProperty(property)) {
-            const originalValue = styles[property];
+            const originalValue = Array.isArray(styles[property]) ? styles[property].slice(-1)[0] : styles[property];
             const transformedValue = transformComplexValue(property, originalValue, config);
             styles[property] = transformedValue;
           }
