@@ -113,8 +113,10 @@ const transformCSSFileContent = (cssContent: string, config = basicConfig): stri
 
         for (const property in styles) {
           if (styles.hasOwnProperty(property)) {
-            const originalValue = Array.isArray(styles[property]) ? styles[property].slice(-1)[0] : styles[property];
-            const transformedValue = transformComplexValue(property, originalValue, config);
+            const originalValue = styles[property];
+            const transformedValue = Array.isArray(originalValue) ?
+              originalValue.map((e: string) => transformComplexValue(property, e, config)) : 
+              transformComplexValue(property, originalValue, config)
             styles[property] = transformedValue;
           }
         }
