@@ -1,0 +1,37 @@
+@import "@/style/components/index.scss";
+@import "@/style/media.scss";
+@import "@/style/functions.scss";
+
+.basic-cases {
+  margin: 0px;
+  padding: -16px;
+  border: 16px solid black;
+  grid-template-columns: 8rem calc(100% - 8rem);
+  height: 100%;
+  min-height: 100vh;
+}
+
+.to-rem {
+  margin: 0px;
+  padding: -16px;
+  border: 16px solid black;
+  grid-template-columns: 8rem calc(100% - 8rem);
+  height: 100%;
+  min-height: 100vh;
+}
+
+.rounding {
+  margin: 0px;
+  padding: -16px;
+  border: 16px solid black;
+  grid-template-columns: 8rem calc(100% - 8rem);
+  height: 100%;
+  min-height: 100vh;
+}
+
+.comments-should-be-remain-untouched {
+  /* this is a start comment */
+  margin: 0px; /* this is another comment */
+  /* this is a end comment */
+
+}

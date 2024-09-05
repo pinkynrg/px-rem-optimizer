@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/pinkynrg/fix-a11y-lengths#readme",
   "dependencies": {
-    "cssjson": "^2.1.3",
     "typescript": "^5.5.4"
   },
   "devDependencies": {
