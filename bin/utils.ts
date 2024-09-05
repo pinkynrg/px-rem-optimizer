@@ -7,12 +7,16 @@ declare global {
   }  
 }
 
-type units = 'px' | 'rem';
-type conversions = units | 'skip';
+type Units = 'px' | 'rem';
+type Conversions = Units | 'skip';
 
-export const transformBasicValue = (value: string, targetUnit: conversions, config = basicConfig): string => {
+export const transformBasicValue = (
+  value: string, 
+  targetUnit: Conversions, 
+  config = basicConfig
+): string => {
 
-  const rawConvertion = (value: number, sourceUnit: units, targetUnit: conversions, baseFontSize: number): number => {
+  const rawConvertion = (value: number, sourceUnit: Units, targetUnit: Conversions, baseFontSize: number): number => {
     if (sourceUnit === targetUnit) return value;
     if (sourceUnit === 'px' && targetUnit === 'rem') return value / baseFontSize;
     if (sourceUnit === 'rem' && targetUnit === 'px') return value * baseFontSize;
@@ -100,13 +104,14 @@ export const transformComplexValue = (property: string, value: string, config: t
 };
 
 export const transformCSSFileContent = (cssContent: string, config = basicConfig): string => {
-  // Use a regex to match CSS properties and values.
-  const propertyValueRegex = /([\w-]+)\s*:\s*([^;]+);/g;
+  // Use a regex to match CSS properties, optional spaces around `:`, and the values.
+  const propertyValueRegex = /([\w-]+)(\s*:\s*)([^;]+);/g;
 
   // Replace each matching property-value pair using the transformComplexValue function.
-  cssContent = cssContent.replace(propertyValueRegex, (match, property, value) => {
+  cssContent = cssContent.replace(propertyValueRegex, (match, property, separator, value) => {
     const transformedValue = transformComplexValue(property, value, config);
-    return `${property}: ${transformedValue};`;
+    // Return the property, the original separator (spaces/newlines), and the transformed value
+    return `${property}${separator}${transformedValue};`;
   });
 
   return cssContent;

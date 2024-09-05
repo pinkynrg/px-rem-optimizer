@@ -33,5 +33,9 @@
   /* this is a start comment */
   margin: 0px; /* this is another comment */
   /* this is a end comment */
-
+  grid-template-areas:
+      "banner banner banner"    /* comment 1 */
+      "sidebar topbar topbar"   /* comment 1 */
+      "sidebar main main"       /* comment 1 */
+      "sidebar footer footer";  /* comment 1 */  
 }
