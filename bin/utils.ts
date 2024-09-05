@@ -50,31 +50,39 @@ export const transformBasicValue = (
   return value.replace(new RegExp(config.lengthMatchingRules[sourceUnit]), (match) => {
     const originalValue = extractNumericValue(match);
     if (originalValue === null) return match;
-    const allowedLength = Object.keys(config.sizes[targetUnit]).map(e => parseFloat(e));
-    const convertedValueRaw = rawConvertion(originalValue, sourceUnit, targetUnit, config.baseFontSize);
-    const absConvertedValueRaw = Math.abs(convertedValueRaw);
-    if (!allowedLength.includes(absConvertedValueRaw)) {
-      const roundUpOnTieConsideringNegative = convertedValueRaw < 0 ? !config.round.roundUpOnTie : config.round.roundUpOnTie;
-      const closest = getClosest(allowedLength, absConvertedValueRaw, roundUpOnTieConsideringNegative);
-      if (config.round.enabled) {
-        return convertedValueRaw >= 0 ? 
-        // @ts-expect-error TOFIX
-        config.sizes[targetUnit][closest] : 
-        // @ts-expect-error TOFIX
-        `-${config.sizes[targetUnit][closest]}`;
+    
+    // get list of allowed sizes
+    const allowedSizes = Object.keys(config.sizes).map(e => parseFloat(e))
+
+    // get number close to the sizes index object
+    const pxValue = rawConvertion(originalValue, sourceUnit, 'px', config.baseFontSize);
+
+    // decides if it should round up on tie
+    const roundUpOnTie = originalValue < 0 ? !config.round.roundUpOnTie : config.round.roundUpOnTie;
+    
+    // get closest size index
+    const closestIndex = getClosest(allowedSizes, Math.abs(pxValue), roundUpOnTie);
+
+    // @ts-expect-error TOFIX
+    const variableName = config.sizes[String(closestIndex)][targetUnit]
+    const convertedValue = rawConvertion(closestIndex, 'px', targetUnit, config.baseFontSize);
+    const sign = originalValue >= 0 ? '' : '-'
+
+    if (config.round.enabled) {
+      if (!!variableName) {
+        // TOFIX: use variableName: consider negative and what to do for css/scss variables
+        return `${sign}${variableName}`
       } else {
-        return convertedValueRaw >= 0 
-        // @ts-expect-error TOFIX
-        ? `${originalValue}${targetUnit} /* tofix: ${config.sizes[targetUnit][closest]} */`
-        // @ts-expect-error TOFIX
-        : `${originalValue}${targetUnit} /* tofix: -${config.sizes[targetUnit][closest]} */`;
+        return `${sign}${convertedValue}${targetUnit}`;
       }
     } else {
-      return convertedValueRaw >= 0 
-      // @ts-expect-error TOFIX
-      ? config.sizes[targetUnit][absConvertedValueRaw] : 
-      // @ts-expect-error TOFIX
-      `-${config.sizes[targetUnit][absConvertedValueRaw]}`;
+      if (!!variableName) {
+        // TOFIX: use variableName: consider negative and what to do for css/scss variables
+        return `${originalValue}${targetUnit} /* tofix: ${sign}${variableName} */`;   
+      } else {
+        return `${originalValue}${targetUnit} /* tofix: ${sign}${convertedValue}${targetUnit} */`;   
+      }
+      
     }
   })
 };

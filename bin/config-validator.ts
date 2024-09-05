@@ -3,7 +3,6 @@ import addFormats from "ajv-formats";
 
 // Load and parse the config schema
 const configSchema = {
-  // Your schema goes here
   type: "object",
   properties: {
     baseFontSize: { 
@@ -29,8 +28,12 @@ const configSchema = {
     },
     lengthMatchingRules: {
       type: "object",
-      propertyNames: { pattern: "^[a-zA-Z]+$" },
-      additionalProperties: { type: "string", format: "regex" }
+      properties: {
+        px: { type: "string", format: "regex" },
+        rem: { type: "string", format: "regex" }
+      },
+      additionalProperties: false,
+      required: ["px", "rem"]
     },
     properties: {
       type: "object",
@@ -42,19 +45,17 @@ const configSchema = {
     },
     sizes: {
       type: "object",
-      properties: {
-        px: {
+      patternProperties: {
+        "^[0-9]+$": {
           type: "object",
-          propertyNames: { pattern: "^[0-9]+(\\.[0-9]+)?$" },
-          additionalProperties: { type: "string", pattern: "^\\d+(\\.\\d+)?px$" }
-        },
-        rem: {
-          type: "object",
-          propertyNames: { pattern: "^[0-9]+(\\.[0-9]+)?$" },
-          additionalProperties: { type: "string", pattern: "^\\d+(\\.\\d+)?rem$" }
+          properties: {
+            px: { type: ["string", "null"], pattern: "^\\d+(\\.\\d+)?px$" },
+            rem: { type: ["string", "null"], pattern: "^\\d+(\\.\\d+)?rem$" }
+          },
+          required: ["px", "rem"]
         }
       },
-      required: ["px", "rem"]
+      additionalProperties: false
     }
   },
   required: [

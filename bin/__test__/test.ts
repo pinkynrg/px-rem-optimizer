@@ -90,7 +90,7 @@ describe('transformComplexValue function', () => {
       expect(transformComplexValue('width', 'to-rem(-16px);', newConfig)).toBe('-1rem;');
       expect(transformComplexValue('padding', 'to-rem(4px) to-rem(8px) to-rem(16px) to-rem(32px);', newConfig)).toBe('4px 8px 16px 32px;');
       expect(transformComplexValue('padding', '1rem 2rem 3rem 4rem;', newConfig)).toBe('16px 32px 48px 64px;');
-      expect(transformComplexValue('translate', 'to-rem(30px) to-rem(-22px);', newConfig)).toBe('1.75rem -1.25rem;');
+      expect(transformComplexValue('translate', 'to-rem(30px) to-rem(-22px);', newConfig)).toBe('2rem -1.25rem;');
       expect(transformComplexValue('grid-template-columns', 'to-rem(16px) calc(100% - to-rem(16px));', newConfig)).toBe('1rem calc(100% - 1rem);');
     });
   });
