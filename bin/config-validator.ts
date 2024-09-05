@@ -6,7 +6,19 @@ const configSchema = {
   // Your schema goes here
   type: "object",
   properties: {
-    baseFontSize: { type: "number", minimum: 1 },
+    baseFontSize: { 
+      type: "number", 
+      minimum: 1 
+    },
+    targetPath: { 
+      type: "string", 
+    },
+    excludePaths: { 
+      type: "array", 
+      items: {
+        type: 'string',
+      },
+    },
     round: {
       type: "object",
       properties: {
@@ -45,7 +57,15 @@ const configSchema = {
       required: ["px", "rem"]
     }
   },
-  required: ["baseFontSize", "round", "lengthMatchingRules", "properties", "sizes"],
+  required: [
+    "baseFontSize", 
+    "targetPath",
+    "excludePaths", 
+    "round", 
+    "lengthMatchingRules", 
+    "properties", 
+    "sizes"
+  ],
   additionalProperties: false
 };
 

@@ -1,5 +1,7 @@
 {
   "baseFontSize": 16,
+  "targetPath": ".",
+  "excludePaths": ["node_modules", "dist"],
   "round": {
     "enabled": true,
     "roundUpOnTie": true
