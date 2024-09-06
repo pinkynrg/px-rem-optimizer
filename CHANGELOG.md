@@ -25,4 +25,4 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* add github workflow for deployment 2 ([4676198](https://github.com/pinkynrg/fix-a11y-lengths/commit/4676198e6929c758d6918eca779ddb626a4b39c3))
+* add github workflow for deployment 2 ([4676198](https://github.com/pinkynrg/px-rem-optimizer/commit/4676198e6929c758d6918eca779ddb626a4b39c3))

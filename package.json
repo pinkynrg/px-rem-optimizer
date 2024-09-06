@@ -1,10 +1,10 @@
 {
-  "name": "fix-a11y-lengths",
+  "name": "px-rem-optimizer",
   "version": "0.0.11",
   "description": "This script transforms CSS length units (e.g., px to rem) based on a configuration, ensuring responsive scaling and accessibility by adapting to changes in base font size.",
   "main": "index.js",
   "bin": {
-    "fix-a11y-length": "./dist/index.js"
+    "px-rem-optimizer": "./dist/index.js"
   },
   "scripts": {
     "build": "npx tsc",
@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pinkynrg/fix-a11y-lengths.git"
+    "url": "git+https://github.com/pinkynrg/px-rem-optimizer.git"
   },
   "author": "Francesco Meli",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pinkynrg/fix-a11y-lengths/issues"
+    "url": "https://github.com/pinkynrg/px-rem-optimizer/issues"
   },
-  "homepage": "https://github.com/pinkynrg/fix-a11y-lengths#readme",
+  "homepage": "https://github.com/pinkynrg/px-rem-optimizer#readme",
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",

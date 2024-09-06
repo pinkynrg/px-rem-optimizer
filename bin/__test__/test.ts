@@ -66,6 +66,7 @@ describe('transformBasicValue function', () => {
 describe('transformComplexValue function', () => {
   test('transforms width from px to rem', () => {
     expect(transformComplexValue('width', '16px;', basicConfig)).toBe('1rem;');
+    expect(transformComplexValue('grid-template-rows', 'min-content min-content auto to-rem(60px);', basicConfig)).toBe('min-content min-content auto 4rem;');
   });
 
   test('transforms border values from rem to px', () => {

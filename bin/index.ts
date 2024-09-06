@@ -4,7 +4,7 @@ import { transformCSSFileContent } from './utils';
 import basicConfig from './config.json';
 import { validateConfig } from './config-validator';
 
-const externalConfigFileName = '.fix-a11y-lengths'
+const externalConfigFileName = '.px-rem-optimizer'
 
 // Helper to load configuration (default or custom)
 const loadConfig = (): typeof basicConfig | null => {

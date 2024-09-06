@@ -1,5 +1,5 @@
 
-# CSS Unit Transformer Utility - fix-a11y-lengths
+# CSS Unit Transformer Utility - px-rem-optimizer
 
 This utility provides functions for transforming CSS unit values (e.g., `px`, `rem`) within CSS files or property values based on configurable rules. It includes support for rounding, custom length-matching rules, handling complex CSS properties, and replacing hard-coded lengths with CSS/SCSS variables.
 
@@ -14,9 +14,9 @@ This utility provides functions for transforming CSS unit values (e.g., `px`, `r
 
 ## Configuration
 
-The configuration is defined in a `.fix-a11y-lengths` file. The schema for the configuration is validated using **AJV**.
+The configuration is defined in a `.px-rem-optimizer` file. The schema for the configuration is validated using **AJV**.
 
-### Example `.fix-a11y-lengths`:
+### Example `.px-rem-optimizer`:
 
 ```json
 {
@@ -52,19 +52,19 @@ In the `sizes` section, you can define mappings from hard-coded lengths to CSS/S
 
 ## Usage
 
-No installation is required. You can run the utility directly using `npx`. Simply place your `.fix-a11y-lengths` file in the same folder where you are executing the command, and the utility will use it as the configuration.
+No installation is required. You can run the utility directly using `npx`. Simply place your `.px-rem-optimizer` file in the same folder where you are executing the command, and the utility will use it as the configuration.
 
 ### Example Command
 
 ```bash
-npx fix-a11y-lengths@latest [file|folder]
+npx px-rem-optimizer@latest [file|folder]
 ```
 
 Replace `[file|folder]` with the path to the CSS file or folder you want to transform.
 
 ## Validation
 
-This utility validates the `.fix-a11y-lengths` configuration file using **AJV (Another JSON Schema Validator)**. It checks for the structure and correctness of the configuration.
+This utility validates the `.px-rem-optimizer` configuration file using **AJV (Another JSON Schema Validator)**. It checks for the structure and correctness of the configuration.
 
 ## Contributing
 
