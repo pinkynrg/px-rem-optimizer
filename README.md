@@ -28,6 +28,7 @@
   padding: 8px;             /* ✅ 10px rounded to 8px */
   margin: 24px;             /* ✅ 1.5rem converted to px */
   border: 1px;              /* ✅ 0.0625rem converted to px */
+}
 ```
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colored.png)](#features)
