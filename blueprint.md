@@ -1,8 +1,31 @@
-
 # CSS Unit Transformer Utility - px-rem-optimizer
 
-This utility provides functions for transforming CSS unit values (e.g., `px`, `rem`) within CSS files or property values based on configurable rules. It includes support for rounding, custom length-matching rules, handling complex CSS properties, and replacing hard-coded lengths with CSS/SCSS variables.
+🔧 Unprecise lengths in your stylesheet?
+📏 Wrong unit based on your preferences?
+💡 Need to replace lengths with CSS/SCSS variables?
 
+```css
+/* Before */
+.container {
+  font-size: 17px;          /* ❌ Not 4px-based, incorrect unit */
+  line-height: 26px;        /* ❌ Not 4px-based, incorrect unit */
+  letter-spacing: 0.26rem;  /* ❌ Not 4px-based, incorrect unit */
+  width: 18px;              /* ❌ Not 4px-based, incorrect unit */
+  padding: 10px;            /* ❌ Not 4px-based */
+  margin: 1.5rem;           /* ❌ Incorrect unit */
+  border: 0.0625rem;        /* ❌ Incorrect unit */
+}
+
+/* After */
+.container {
+  font-size: 1rem;          /* ✅ 17px rounded to 16px, converted to rem */   
+  line-height: 1.5rem;      /* ✅ 26px rounded to 24px, converted to rem */
+  letter-spacing: 0.25rem;  /* ✅ 0.26rem rounded to 0.25rem */   
+  width: 1rem;              /* ✅ 18px rounded to 16px, converted to rem */
+  padding: 8px;             /* ✅ 10px rounded to 8px */
+  margin: 24px;             /* ✅ 1.5rem converted to px */
+  border:
+```
 ## Features
 
 - **Unit conversion**: Transform values between `px` and `rem` or other units.
