@@ -21,29 +21,106 @@ The configuration is defined in a `.px-rem-optimizer` file. The schema for the c
 ```json
 {
   "baseFontSize": 16,
+  "targetPath": ".",
+  "excludePaths": ["node_modules", "dist"],
   "round": {
     "enabled": true,
     "roundUpOnTie": true
   },
   "lengthMatchingRules": {
-    "px": "(-?\d+(\.\d+)?|\.\d+)px",
-    "rem": "(-?\d+(\.\d+)?|\.\d+)rem"
+    "px": "(-?\\d+(\\.\\d+)?|\\.\\d+)px",
+    "rem": "(-?\\d+(\\.\\d+)?|\\.\\d+)rem"
   },
   "properties": {
     "width": "rem",
-    "padding": "px"
+    "min-width": "rem",
+    "max-width": "rem",
+    "height": "rem",
+    "min-height": "rem",
+    "max-height": "rem",
+    "padding": "px",
+    "padding-top": "px",
+    "padding-right": "px",
+    "padding-bottom": "px",
+    "padding-left": "px",
+    "margin": "px",
+    "margin-top": "px",
+    "margin-right": "px",
+    "margin-bottom": "px",
+    "margin-left": "px",
+    "border": "px",
+    "border-top": "px",
+    "border-right": "px",
+    "border-bottom": "px",
+    "border-left": "px",
+    "border-width": "px",
+    "border-radius": "px",
+    "outline": "px",
+    "outline-width": "px",
+    "box-shadow": "px",
+    "text-shadow": "px",
+    "font-size": "px",
+    "line-height": "rem",
+    "letter-spacing": "rem",
+    "word-spacing": "rem",
+    "text-indent": "rem",
+    "flex-basis": "rem",
+    "gap": "rem",
+    "column-gap": "rem",
+    "row-gap": "rem",
+    "grid-template-columns": "rem",
+    "grid-template-rows": "rem",
+    "grid-auto-columns": "rem",
+    "grid-auto-rows": "rem",
+    "background-position": "px",
+    "background-size": "px",
+    "border-spacing": "px",
+    "translate": "rem",
+    "translateX": "rem",
+    "translateY": "rem",
+    "perspective": "rem",
+    "transform-origin": "rem",
+    "list-style-position": "rem",
+    "list-style-image": "rem",
+    "clip-path": "rem",
+    "mask-position": "px",
+    "mask-size": "px",
+    "object-position": "rem",
+    "scroll-margin": "rem",
+    "scroll-margin-top": "rem",
+    "scroll-margin-right": "rem",
+    "scroll-margin-bottom": "rem",
+    "scroll-margin-left": "rem",
+    "scroll-padding": "rem",
+    "scroll-padding-top": "rem",
+    "scroll-padding-right": "rem",
+    "scroll-padding-bottom": "rem",
+    "scroll-padding-left": "rem",
+    "shape-margin": "rem",
+    "stroke-width": "px",
+    "column-rule": "px",
+    "cursor": "px"
   },
   "sizes": {
-    "px": {
-      "0": "var(--size-0-in-px)",
-      "1": "var(--size-1-in-px)",
-      "4": "var(--size-4-in-px)"
-    },
-    "rem": {
-      "0": "var(--size-0-in-rem)",
-      "1": "var(--size-1-in-rem)",
-      "4": "var(--size-4-in-rem)"
-    }
+    "0": {"px": null, "rem": null},
+    "1": {"px": null, "rem": null},
+    "2": {"px": null, "rem": null},
+    "4": {"px": null, "rem": null},
+    "8": {"px": null, "rem": null},
+    "12": {"px": null, "rem": null},
+    "16": {"px": null, "rem": null},
+    "20": {"px": null, "rem": null},
+    "24": {"px": null, "rem": null},
+    "28": {"px": null, "rem": null},
+    "32": {"px": null, "rem": null},
+    "36": {"px": null, "rem": null},
+    "40": {"px": null, "rem": null},
+    "44": {"px": null, "rem": null},
+    "48": {"px": null, "rem": null},
+    "64": {"px": null, "rem": null},
+    "80": {"px": null, "rem": null},
+    "96": {"px": null, "rem": null},
+    "128": {"px": null, "rem": null}
   }
 }
 ```
@@ -61,10 +138,6 @@ npx px-rem-optimizer@latest [file|folder]
 ```
 
 Replace `[file|folder]` with the path to the CSS file or folder you want to transform.
-
-## Validation
-
-This utility validates the `.px-rem-optimizer` configuration file using **AJV (Another JSON Schema Validator)**. It checks for the structure and correctness of the configuration.
 
 ## Contributing
 
