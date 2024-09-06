@@ -99,6 +99,14 @@
     "64": {"px": null, "rem": null},
     "80": {"px": null, "rem": null},
     "96": {"px": null, "rem": null},
-    "128": {"px": null, "rem": null}
+    "128": {"px": null, "rem": null},
+    "240": {"px": null, "rem": null},
+    "280": {"px": null, "rem": null},
+    "320": {"px": null, "rem": null},
+    "480": {"px": null, "rem": null},
+    "640": {"px": null, "rem": null},
+    "960": {"px": null, "rem": null},
+    "1200": {"px": null, "rem": null},
+    "1440": {"px": null, "rem": null}
   }
 }

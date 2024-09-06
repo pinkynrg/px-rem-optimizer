@@ -65,7 +65,8 @@ export const transformBasicValue = (
 
     // @ts-expect-error TOFIX
     const variableName = config.sizes[String(closestIndex)][targetUnit]
-    const convertedValue = rawConvertion(closestIndex, 'px', targetUnit, config.baseFontSize);
+    const convertedNotRoundedValue = rawConvertion(originalValue, sourceUnit, targetUnit, config.baseFontSize);
+    const convertedRoundedValue = rawConvertion(closestIndex, 'px', targetUnit, config.baseFontSize);
     const sign = originalValue >= 0 ? '' : '-'
 
     if (config.round.enabled) {
@@ -73,14 +74,17 @@ export const transformBasicValue = (
         // TOFIX: use variableName: consider negative and what to do for css/scss variables
         return `${sign}${variableName}`
       } else {
-        return `${sign}${convertedValue}${targetUnit}`;
+        return `${sign}${convertedRoundedValue}${targetUnit}`;
       }
     } else {
       if (!!variableName) {
         // TOFIX: use variableName: consider negative and what to do for css/scss variables
         return `${originalValue}${targetUnit} /* tofix: ${sign}${variableName} */`;   
       } else {
-        return `${originalValue}${targetUnit} /* tofix: ${sign}${convertedValue}${targetUnit} */`;   
+        if (convertedNotRoundedValue !== parseFloat(`${sign}${convertedRoundedValue}`)) {
+          return `${convertedNotRoundedValue}${targetUnit} /* tofix: ${sign}${convertedRoundedValue}${targetUnit} */`;   
+        }
+        return `${convertedNotRoundedValue}${targetUnit}`;   
       }
       
     }

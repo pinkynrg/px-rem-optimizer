@@ -59,6 +59,13 @@ describe('transformBasicValue function', () => {
       expect(transformBasicValue('-1.6px', 'px', newConfigWithRoundingDisabled)).toBe('-1.6px /* tofix: -2px */');
       expect(transformBasicValue('-1.5px', 'px', newConfigWithRoundingDisabled)).toBe('-1.5px /* tofix: -1px */');
       expect(transformBasicValue('-1.4px', 'px', newConfigWithRoundingDisabled)).toBe('-1.4px /* tofix: -1px */');
+      
+      expect(transformBasicValue('16px', 'rem', newConfigWithRoundingDisabled)).toBe('1rem');
+      expect(transformBasicValue('15px', 'rem', newConfigWithRoundingDisabled)).toBe('0.9375rem /* tofix: 1rem */');
+      expect(transformBasicValue('14px', 'rem', newConfigWithRoundingDisabled)).toBe('0.875rem /* tofix: 1rem */');
+      expect(transformBasicValue('-16px', 'rem', newConfigWithRoundingDisabled)).toBe('-1rem');
+      expect(transformBasicValue('-15px', 'rem', newConfigWithRoundingDisabled)).toBe('-0.9375rem /* tofix: -1rem */');
+      expect(transformBasicValue('-14px', 'rem', newConfigWithRoundingDisabled)).toBe('-0.875rem /* tofix: -0.75rem */');
     });
   });
 });

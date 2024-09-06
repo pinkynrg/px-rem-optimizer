@@ -27,6 +27,7 @@
   grid-template-columns: 127.1px calc(100% - 129.1px);
   height: 100%;
   min-height: 100vh;
+  min-width: 33.3rem;
 }
 
 .comments-should-be-remain-untouched {
@@ -38,4 +39,8 @@
       "sidebar topbar topbar"   /* comment 1 */
       "sidebar main main"       /* comment 1 */
       "sidebar footer footer";  /* comment 1 */  
+}
+
+&::after {
+  min-width: 33.3rem;
 }
