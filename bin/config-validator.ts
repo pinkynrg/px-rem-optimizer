@@ -36,9 +36,6 @@ const schema = {
     },
     transformers: {
       type: "array",
-      items: {
-        instanceof: "Function"
-      }
     },
     properties: {
       type: "object",
@@ -71,17 +68,9 @@ const schema = {
       }
     }
   },
-  required: ["baseFontSize", "targetPath", "excludePaths", "roundStrategy", "transformers", "properties", "sizes"],
+  required: ["baseFontSize", "targetPath", "excludePaths", "roundStrategy", "properties", "sizes", "transformers"],
   additionalProperties: false
 };
-
-// Add a custom function validator to AJV
-ajv.addKeyword({
-  keyword: "instanceof",
-  compile(expectedInstance) {
-    return (data) => data instanceof expectedInstance;
-  }
-});
 
 // Define the function that validates the config
 export const validateConfig = (config: any): boolean => {
