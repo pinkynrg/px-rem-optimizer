@@ -1,4 +1,4 @@
-import basicConfig from './config.json';
+import { config as basicConfig } from './config';
 import { Entries } from 'type-fest';
 
 declare global {
@@ -10,121 +10,89 @@ declare global {
 type Units = 'px' | 'rem';
 type Conversions = Units | 'skip';
 
-export const transformBasicValue = (
-  value: string, 
-  targetUnit: Conversions, 
-  config = basicConfig
-): string => {
+const regex = "(-?\\d+(?:\\.\\d+)?|\\.\\d+)(px|rem)"
 
-  const rawConvertion = (value: number, sourceUnit: Units, targetUnit: Conversions, baseFontSize: number): number => {
-    if (sourceUnit === targetUnit) return value;
-    if (sourceUnit === 'px' && targetUnit === 'rem') return value / baseFontSize;
-    if (sourceUnit === 'rem' && targetUnit === 'px') return value * baseFontSize;
-    return value;
-  }
+const getClosest = (arr: number[], num: number, roundUp: boolean) => {
+  return arr.reduce((a, b) => Math.abs(a - num) < Math.abs(b - num) ? a : 
+    Math.abs(a - num) === Math.abs(b - num) ? (roundUp ? b : a) : b);
+}
 
-  const getSourceUnit = (value: string, lengthMatchingRules: {'px': string, 'rem': string}) => {
-    for (const [unit, regexStr] of Object.entries(lengthMatchingRules)) {
-      const regex = new RegExp(regexStr);
-      if (regex.test(value)) {
-        return unit;
-      }
-    }
-  }
+const rawConvertion = (value: number, sourceUnit: Units, targetUnit: Conversions, baseFontSize: number): number => {
+  if (sourceUnit === targetUnit) return value;
+  if (sourceUnit === 'px' && targetUnit === 'rem') return value / baseFontSize;
+  if (sourceUnit === 'rem' && targetUnit === 'px') return value * baseFontSize;
+  return value;
+}
 
-  const extractNumericValue = (inputString: string) => {
-    const pattern = /(\-?\d+(\.\d+)?|\.\d+)/;
-    const match = inputString.match(pattern);
-    return match ? parseFloat(match[0]) : null;
-  }
+const transformValue = (value: string, transformers: ((value: string) => string)[]) => {
+  return transformers.reduce<string>((acc, transformer) => transformer(acc), value);
+}
 
-  const getClosest = (arr: number[], num: number, roundUp: boolean) => {
-    return arr.reduce((a, b) => Math.abs(a - num) < Math.abs(b - num) ? a : 
-      Math.abs(a - num) === Math.abs(b - num) ? (roundUp ? b : a) : b);
-  }
-  
-  const sourceUnit = getSourceUnit(value, config.lengthMatchingRules)
+const convertValue = (value: string, targetUnit: Units, baseFontSize: number) => {
+  return value.replace(new RegExp(regex, 'g'), (_, sourceNumberString, sourceUnit) => {
+    const sourceNumber = parseFloat(sourceNumberString);
+    const convertedValue = rawConvertion(sourceNumber, sourceUnit, targetUnit, baseFontSize);
+    return `${convertedValue}${targetUnit}`
+  })
+}
 
-  if (targetUnit === 'skip' || !sourceUnit) return value
+const roundValue = (value: string, targetUnit: Units, baseFontSize: number, sizes: number[], roundStrategy: string) => {
+  return value.replace(new RegExp(regex, 'g'), (_, num, unit) => {
+    const number = parseFloat(num);
+    const inPx = rawConvertion(number, unit, 'px', baseFontSize);
+    const roundedInPx = getClosest(sizes, Math.abs(inPx), number >= 0 && roundStrategy.includes('up')) 
+    const roundedInTargetUnit = rawConvertion(roundedInPx, 'px', targetUnit, baseFontSize);
+    const rounded = number >= 0 ? roundedInTargetUnit : -roundedInTargetUnit;
+    switch (roundStrategy) {
+      case 'on_up': return `${rounded}${unit}`
+      case 'on_down': return `${rounded}${unit}`
+      case 'comment_up': return `${number}${unit}${number !== rounded ? ` /* tofix ${rounded}${targetUnit} */` : ''}`
+      case 'comment_down': return `${number}${unit}${number !== rounded ? ` /* tofix ${rounded}${targetUnit} */` : ''}`
+      case 'off': return `${number}${unit}`
+      default: return `${number}${unit}`
 
-  return value.replace(new RegExp(config.lengthMatchingRules[sourceUnit]), (match) => {
-    const originalValue = extractNumericValue(match);
-    if (originalValue === null) return match;
-    
-    // get list of allowed sizes
-    const allowedSizes = Object.keys(config.sizes).map(e => parseFloat(e))
-
-    // get number close to the sizes index object
-    const pxValue = rawConvertion(originalValue, sourceUnit, 'px', config.baseFontSize);
-
-    // decides if it should round up on tie
-    const roundUpOnTie = originalValue < 0 ? !config.round.roundUpOnTie : config.round.roundUpOnTie;
-    
-    // get closest size index
-    const closestIndex = getClosest(allowedSizes, Math.abs(pxValue), roundUpOnTie);
-
-    // @ts-expect-error TOFIX
-    const variableName = config.sizes[String(closestIndex)][targetUnit]
-    const convertedNotRoundedValue = rawConvertion(originalValue, sourceUnit, targetUnit, config.baseFontSize);
-    const convertedRoundedValue = rawConvertion(closestIndex, 'px', targetUnit, config.baseFontSize);
-    const sign = originalValue >= 0 ? '' : '-'
-
-    if (config.round.enabled) {
-      if (!!variableName) {
-        // TOFIX: use variableName: consider negative and what to do for css/scss variables
-        return `${sign}${variableName}`
-      } else {
-        return `${sign}${convertedRoundedValue}${targetUnit}`;
-      }
-    } else {
-      if (!!variableName) {
-        // TOFIX: use variableName: consider negative and what to do for css/scss variables
-        return `${originalValue}${targetUnit} /* tofix: ${sign}${variableName} */`;   
-      } else {
-        if (convertedNotRoundedValue !== parseFloat(`${sign}${convertedRoundedValue}`)) {
-          return `${convertedNotRoundedValue}${targetUnit} /* tofix: ${sign}${convertedRoundedValue}${targetUnit} */`;   
-        }
-        return `${convertedNotRoundedValue}${targetUnit}`;   
-      }
-      
     }
   })
-};
+}
 
-export const transformComplexValue = (property: string, value: string, config: typeof basicConfig): string => {
-  const isValidProperty = (prop: string, obj: typeof config.properties): prop is keyof typeof config.properties => {
-    return prop in obj;
+const getRoundStrategyString = (roundStrategy: { mode: string, onTie: string}) => {
+  switch (roundStrategy.mode) {
+    case 'on': return roundStrategy.onTie === 'up' ? 'on_up' : 'on_down';
+    case 'off': return 'off';
+    case 'comment': return roundStrategy.onTie === 'up' ? 'comment_up' : 'comment_down';
+    default: return 'off'
   }
+}
 
-  // Determine the target unit for the property
-  const targetUnit = isValidProperty(property, config.properties) ? config.properties[property] as 'rem' | 'px' : null;
+export const optimizeValue = (
+  property: string,
+  value: string, 
+  config: typeof basicConfig
+): string => {
 
-  if (!targetUnit) return value;
+  // find target unit from the confiig file based on the property in the config 
+  const targetUnit = property in config.properties
+  ? config.properties[property as keyof typeof config.properties] as Conversions
+  : 'skip';
+  
+  if (targetUnit === 'skip') return value;
 
-  // Iterate over each unit type (px, rem) defined in lengthMatchingRules
-  for (const [_, regexStr] of Object.entries(config.lengthMatchingRules)) {
-    const regex = new RegExp(regexStr, 'g'); // Create a global regex to match all instances in the value string
+  // transform the value based on the transformers in the config file
+  const transformedValue = transformValue(value, config.transformers)
 
-    // Replace each matching instance in the value using the transformBasicValue
-    value = value.replace(regex, (match) => {
-      // Call transformBasicValue for each match found
-      return transformBasicValue(match, targetUnit, config);
-    });
-  }
+  // convert the value to the target unit
+  const convertedValue = convertValue(transformedValue, targetUnit, config.baseFontSize)
 
-  return value;
+  // round the value to the closest value in the sizes array in the config file
+  const sizes = Object.keys(config.sizes).map(e => parseFloat(e))
+  const roundStrategyString = getRoundStrategyString(config.roundStrategy)
+  return roundValue(convertedValue, targetUnit, config.baseFontSize, sizes, roundStrategyString)
 };
 
 export const transformCSSFileContent = (cssContent: string, config = basicConfig): string => {
-  // Use a regex to match CSS properties, optional spaces around `:`, and the values.
-  const propertyValueRegex = /([\w-]+)(\s*:\s*)([^;]+);/g;
-
-  // Replace each matching property-value pair using the transformComplexValue function.
-  cssContent = cssContent.replace(propertyValueRegex, (match, property, separator, value) => {
-    const transformedValue = transformComplexValue(property, value, config);
-    // Return the property, the original separator (spaces/newlines), and the transformed value
-    return `${property}${separator}${transformedValue};`;
+  const propertyValueRegex = /([\w-]+)(\s*:\s*)([^\{\};]+);/g;
+  return cssContent.replace(propertyValueRegex, (_, property, separator, value) => {
+    const convertedValue = optimizeValue(property, value, config);
+    return `${property}${separator}${convertedValue};`;
   });
-
-  return cssContent;
 };

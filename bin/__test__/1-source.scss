@@ -41,6 +41,10 @@
       "sidebar footer footer";  /* comment 1 */  
 }
 
+& > div:last-child {
+  min-width: 33.3rem;
+}
+
 &::after {
   min-width: 33.3rem;
 }

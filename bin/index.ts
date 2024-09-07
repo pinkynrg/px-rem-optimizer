@@ -1,30 +1,51 @@
 import fs from 'fs';
 import path from 'path';
 import { transformCSSFileContent } from './utils';
-import basicConfig from './config.json';
+import {config as basicConfig } from './config';
 import { validateConfig } from './config-validator';
 
-const externalConfigFileName = '.px-rem-optimizer'
+const externalConfigFileName = 'px-rem-optimizer.ts'
 
 // Helper to load configuration (default or custom)
-const loadConfig = (): typeof basicConfig | null => {
+const loadConfig = (externalConfigFileName: string): typeof basicConfig | null => {
   const customConfigPath = path.resolve(process.cwd(), externalConfigFileName);
+
   if (fs.existsSync(customConfigPath)) {
     try {
-      const configContent = JSON.parse(fs.readFileSync(customConfigPath, 'utf8'));
-      const isValid = validateConfig(configContent)
-      if (isValid) {
-        console.log(`Custom configuration ${externalConfigFileName} found. Using custom config file.`);
-        return configContent;
+      if (externalConfigFileName.endsWith('.ts')) {
+        // Use ts-node to dynamically require the TypeScript config file
+        const tsNode = require('ts-node');
+        tsNode.register(); // Registers TypeScript in Node.js
+        
+        const configContent = require(customConfigPath); // Import the .ts file
+        
+        const isValid = validateConfig(configContent.default || configContent); // Handle default export or module.exports
+        if (isValid) {
+          console.log(`Custom configuration ${externalConfigFileName} found. Using custom config file.`);
+          return configContent.default || configContent;
+        } else {
+          throw new Error('Invalid custom configuration.');
+        }
+      } else if (externalConfigFileName.endsWith('.json')) {
+        // For JSON files, continue using fs.readFileSync
+        const configContent = JSON.parse(fs.readFileSync(customConfigPath, 'utf8'));
+        const isValid = validateConfig(configContent);
+        if (isValid) {
+          console.log(`Custom configuration ${externalConfigFileName} found. Using custom config file.`);
+          return configContent;
+        } else {
+          throw new Error('Invalid custom configuration.');
+        }
       } else {
-        throw new Error('Invalid custom configuration.');
+        throw new Error('Unsupported file format. Only .ts and .json files are supported.');
       }
     } catch (error) {
       // @ts-expect-error
       console.error(error.message);
-      return null
+      return null;
     }
   }
+
   console.log('No custom config found. Using default configuration.');
   return basicConfig;
 };
@@ -79,7 +100,7 @@ const traverseDirectory = (directory: string, rootFolder: string, config: typeof
 };
 
 // Load configuration (custom or default or null if invalid custom config)
-const config = loadConfig();
+const config = loadConfig(externalConfigFileName);
 
 if (!!config) {
   

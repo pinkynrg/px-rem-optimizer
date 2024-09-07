@@ -1,15 +1,12 @@
-{
+export const config = {
   "baseFontSize": 16,
   "targetPath": ".",
   "excludePaths": ["node_modules", "dist"],
-  "round": {
-    "enabled": true,
-    "roundUpOnTie": true
+  "roundStrategy": {
+    "onTie": 'up',
+    "mode": 'on'
   },
-  "lengthMatchingRules": {
-    "px": "(-?\\d+(\\.\\d+)?|\\.\\d+)px|to-rem\\((\\-?\\d+(\\.\\d+)?|\\.\\d+)px\\)",
-    "rem": "(-?\\d+(\\.\\d+)?|\\.\\d+)rem"
-  },
+  "transformers": [(value: string) => value],
   "properties": {
     "width": "rem",
     "min-width": "rem",
