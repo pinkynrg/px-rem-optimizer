@@ -4,51 +4,40 @@ import { transformCSSFileContent } from './utils';
 import {config as basicConfig } from './config';
 import { validateConfig } from './config-validator';
 
-const externalConfigFileName = 'px-rem-optimizer.ts'
+// If TypeScript is needed, require ts-node
+const loadTSConfig = () => {
+  try {
+    require('ts-node').register();
+    return true;
+  } catch (e) {
+    console.warn('ts-node is not installed. Skipping TypeScript support.');
+    return false;
+  }
+};
 
-// Helper to load configuration (default or custom)
-const loadConfig = (externalConfigFileName: string): typeof basicConfig | null => {
-  const customConfigPath = path.resolve(process.cwd(), externalConfigFileName);
+const loadConfig = () => {
+  const tsPath = path.resolve(process.cwd(), 'px-rem-optimizer.config.ts');
+  const jsPath = path.resolve(process.cwd(), 'px-rem-optimizer.config.js');
 
-  if (fs.existsSync(customConfigPath)) {
-    try {
-      if (externalConfigFileName.endsWith('.ts')) {
-        // Use ts-node to dynamically require the TypeScript config file
-        const tsNode = require('ts-node');
-        tsNode.register(); // Registers TypeScript in Node.js
-        
-        const configContent = require(customConfigPath); // Import the .ts file
-        
-        const isValid = validateConfig(configContent.default || configContent); // Handle default export or module.exports
-        if (isValid) {
-          console.log(`Custom configuration ${externalConfigFileName} found. Using custom config file.`);
-          return configContent.default || configContent;
-        } else {
-          throw new Error('Invalid custom configuration.');
-        }
-      } else if (externalConfigFileName.endsWith('.json')) {
-        // For JSON files, continue using fs.readFileSync
-        const configContent = JSON.parse(fs.readFileSync(customConfigPath, 'utf8'));
-        const isValid = validateConfig(configContent);
-        if (isValid) {
-          console.log(`Custom configuration ${externalConfigFileName} found. Using custom config file.`);
-          return configContent;
-        } else {
-          throw new Error('Invalid custom configuration.');
-        }
-      } else {
-        throw new Error('Unsupported file format. Only .ts and .json files are supported.');
-      }
-    } catch (error) {
-      // @ts-expect-error
-      console.error(error.message);
-      return null;
+  // Check if TypeScript config exists
+  if (fs.existsSync(tsPath)) {
+    // Ensure ts-node is registered to handle TypeScript files
+    if (loadTSConfig()) {
+      const config = require(tsPath);
+      return config.default || config;
     }
   }
 
-  console.log('No custom config found. Using default configuration.');
-  return basicConfig;
+  // Check if JavaScript config exists
+  if (fs.existsSync(jsPath)) {
+    const config = require(jsPath);
+    return config.default || config;
+  }
+
+  // If neither config file exists, throw an error
+  throw new Error('No configuration file found. Expected px-rem-optimizer.config.ts or px-rem-optimizer.config.js');
 };
+
 
 // Transform a single file with the given config
 const transformFile = (filePath: string, config: typeof basicConfig) => {
@@ -100,10 +89,10 @@ const traverseDirectory = (directory: string, rootFolder: string, config: typeof
 };
 
 // Load configuration (custom or default or null if invalid custom config)
-const config = loadConfig(externalConfigFileName);
+const config = loadConfig();
 
-if (!!config) {
-  
+if (!!config && validateConfig(config)) {
+
   // Main logic to execute the transformations
   const targetPath = process.argv[2] || config?.targetPath;
 
