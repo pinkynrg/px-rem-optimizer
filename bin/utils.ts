@@ -1,5 +1,5 @@
-import { config as basicConfig } from './config';
 import { Entries } from 'type-fest';
+import { Config } from './types';
 
 declare global {
   interface ObjectConstructor {
@@ -11,6 +11,10 @@ type Units = 'px' | 'rem';
 type Conversions = Units | 'skip';
 
 const regex = "(-?\\d+(?:\\.\\d+)?|\\.\\d+)(px|rem)"
+
+const checkUnit = (unit: any): unit is Units => {
+  return unit === 'px' || unit === 'rem'
+}    
 
 const getClosest = (arr: number[], num: number, roundUp: boolean) => {
   return arr.reduce((a, b) => Math.abs(a - num) < Math.abs(b - num) ? a : 
@@ -36,21 +40,42 @@ const convertValue = (value: string, targetUnit: Units, baseFontSize: number) =>
   })
 }
 
-const roundValue = (value: string, targetUnit: Units, baseFontSize: number, sizes: number[], roundStrategy: string) => {
-  return value.replace(new RegExp(regex, 'g'), (_, num, unit) => {
-    const number = parseFloat(num);
-    const inPx = rawConvertion(number, unit, 'px', baseFontSize);
-    const roundedInPx = getClosest(sizes, Math.abs(inPx), number >= 0 && roundStrategy.includes('up')) 
-    const roundedInTargetUnit = rawConvertion(roundedInPx, 'px', targetUnit, baseFontSize);
-    const rounded = number >= 0 ? roundedInTargetUnit : -roundedInTargetUnit;
-    switch (roundStrategy) {
-      case 'on_up': return `${rounded}${unit}`
-      case 'on_down': return `${rounded}${unit}`
-      case 'comment_up': return `${number}${unit}${number !== rounded ? ` /* tofix ${rounded}${targetUnit} */` : ''}`
-      case 'comment_down': return `${number}${unit}${number !== rounded ? ` /* tofix ${rounded}${targetUnit} */` : ''}`
-      case 'off': return `${number}${unit}`
-      default: return `${number}${unit}`
+const formatVariableWithSign = (variable: string, isPositive: boolean) => {
+  if (variable.startsWith('--')) {
+    return isPositive ? `var(${variable})` : `calc(-1 * var(${variable}))`
+  } else {
+    return isPositive ? variable : `(-${variable})`
+  }
+}
 
+const roundValue = (
+  value: string, 
+  baseFontSize: number, 
+  sizes: Config['sizes'], 
+  roundStrategy: Config['roundStrategy']
+) => {
+  const roundStrategyString = getRoundStrategyString(roundStrategy)
+  const sizesList = Object.keys(sizes).map(e => parseFloat(e))
+  return value.replace(new RegExp(regex, 'g'), (_, value, unit) => {
+    if (checkUnit(unit)) {
+      const number = parseFloat(value);
+      const inPx = rawConvertion(number, unit, 'px', baseFontSize);
+      const roundedInPx = getClosest(sizesList, Math.abs(inPx), number >= 0 && roundStrategyString.includes('up')) 
+      const roundedInTargetUnit = rawConvertion(roundedInPx, 'px', unit, baseFontSize);
+      const isPositive = number >= 0;
+      const rounded = isPositive ? roundedInTargetUnit : -roundedInTargetUnit;
+      const variable = sizes.hasOwnProperty(roundedInPx) ? sizes[roundedInPx][unit] : null;
+      const finalResult = variable ? formatVariableWithSign(variable, isPositive) : `${rounded}${unit}`
+      switch (roundStrategyString) {
+        case 'on_up': return finalResult
+        case 'on_down': return finalResult
+        case 'comment_up': return `${number}${unit}${number !== rounded ? ` /* tofix ${finalResult} */` : ''}`
+        case 'comment_down': return `${number}${unit}${number !== rounded ? ` /* tofix ${finalResult} */` : ''}`
+        case 'off': return `${number}${unit}`
+        default: return `${number}${unit}`
+      }
+    } else {
+      return `${value}${unit}`
     }
   })
 }
@@ -67,7 +92,7 @@ const getRoundStrategyString = (roundStrategy: { mode: string, onTie: string}) =
 export const optimizeValue = (
   property: string,
   value: string, 
-  config: typeof basicConfig
+  config: Config
 ): string => {
 
   // find target unit from the confiig file based on the property in the config 
@@ -84,12 +109,10 @@ export const optimizeValue = (
   const convertedValue = convertValue(transformedValue, targetUnit, config.baseFontSize)
 
   // round the value to the closest value in the sizes array in the config file
-  const sizes = Object.keys(config.sizes).map(e => parseFloat(e))
-  const roundStrategyString = getRoundStrategyString(config.roundStrategy)
-  return roundValue(convertedValue, targetUnit, config.baseFontSize, sizes, roundStrategyString)
+  return roundValue(convertedValue, config.baseFontSize, config.sizes, config.roundStrategy)
 };
 
-export const transformCSSFileContent = (cssContent: string, config = basicConfig): string => {
+export const transformCSSFileContent = (cssContent: string, config: Config): string => {
   const propertyValueRegex = /([\w-]+)(\s*:\s*)([^\{\};]+);/g;
   return cssContent.replace(propertyValueRegex, (_, property, separator, value) => {
     const convertedValue = optimizeValue(property, value, config);

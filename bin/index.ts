@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { transformCSSFileContent } from './utils';
-import {config as basicConfig } from './config';
 import { validateConfig } from './config-validator';
+import { Config } from './types';
 
 // If TypeScript is needed, require ts-node
 const loadTSConfig = () => {
@@ -40,7 +40,7 @@ const loadConfig = () => {
 
 
 // Transform a single file with the given config
-const transformFile = (filePath: string, config: typeof basicConfig) => {
+const transformFile = (filePath: string, config: Config) => {
   console.log(`Processing: ${filePath}`);
   const content = fs.readFileSync(filePath, 'utf8');
   const transformedContent = transformCSSFileContent(content, config);
@@ -53,7 +53,7 @@ const transformFile = (filePath: string, config: typeof basicConfig) => {
   }
 };
 
-const isExcluded = (fullPath: string, rootFolder: string, config: typeof basicConfig): boolean => {
+const isExcluded = (fullPath: string, rootFolder: string, config: Config): boolean => {
   // Check whether it's a file or directory using fs.statSync
   const stats = fs.statSync(fullPath);
 
@@ -70,7 +70,7 @@ const isExcluded = (fullPath: string, rootFolder: string, config: typeof basicCo
   });
 };
 
-const traverseDirectory = (directory: string, rootFolder: string, config: typeof basicConfig) => {
+const traverseDirectory = (directory: string, rootFolder: string, config: Config) => {
   fs.readdirSync(directory).forEach((file) => {
     const fullPath = path.join(directory, file);
     const stat = fs.statSync(fullPath);

@@ -1,4 +1,6 @@
-export const config = {
+import { Config } from "../types";
+
+export const config: Config = {
   "baseFontSize": 16,
   "targetPath": ".",
   "excludePaths": ["node_modules", "dist"],
