@@ -19,15 +19,37 @@
   border: 0.0625rem;        /* ❌ Incorrect unit */
 }
 
-/* After */
+/* Applies Unit Conversion */
 .container {
-  font-size: 1rem;          /* ✅ 17px rounded to 16px, converted to rem */   
-  line-height: 1.5rem;      /* ✅ 26px rounded to 24px, converted to rem */
-  letter-spacing: 0.25rem;  /* ✅ 0.26rem rounded to 0.25rem */   
-  width: 1rem;              /* ✅ 18px rounded to 16px, converted to rem */
-  padding: 8px;             /* ✅ 10px rounded to 8px */
-  margin: 24px;             /* ✅ 1.5rem converted to px */
+  font-size: 1.0625rem;     /* ✅ 17px converted to rem */
+  line-height: 1.625rem;    /* ✅ 26px converted to rem */
+  letter-spacing: 0.26rem;  /* ✅ No change, already in rem */
+  width: 1.125rem;          /* ✅ 18px converted to rem */
+  padding: 0.625rem;        /* ✅ 10px converted to rem */
+  margin: 24px;             /* ✅ No change, already correct */
   border: 1px;              /* ✅ 0.0625rem converted to px */
+}
+
+/* Applies Rounding */
+.container {
+  font-size: 1rem;          /* ✅ 17px rounded to 16px */
+  line-height: 1.5rem;      /* ✅ 26px rounded to 24px */
+  letter-spacing: 0.25rem;  /* ✅ 0.26rem rounded to 0.25rem */
+  width: 1rem;              /* ✅ 18px rounded to 16px */
+  padding: 8px;             /* ✅ 10px rounded to 8px */
+  margin: 1.5rem;           /* ✅ No change, already in rem */
+  border: 1px;              /* ✅ No rounding needed */
+}
+
+/* Applies Variable Usage */
+.container {
+  font-size: var(--space-4);          /* ✅ Using variable for 1rem */
+  line-height: var(--space-6);        /* ✅ Using variable for 1.5rem */
+  letter-spacing: var(--space-025);   /* ✅ Using variable for 0.25rem */
+  width: var(--space-4);              /* ✅ Using variable for 1rem */
+  padding: var(--space-2);            /* ✅ Using variable for 8px */
+  margin: var(--space-24);            /* ✅ Using variable for 1.5rem */
+  border: var(--space-1);             /* ✅ Using variable for 1px */
 }
 ```
 
