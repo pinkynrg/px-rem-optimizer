@@ -1,88 +1,75 @@
-import Ajv from "ajv";
+import { Config } from "./types";
 
-const ajv = new Ajv();
+export const configValidator = (config: Config): boolean => {
+  const logError = (message: string) => {
+    console.error(`Config validation error: ${message}`);
+  };
 
-// Define the schema
-const schema = {
-  type: "object",
-  properties: {
-    baseFontSize: {
-      type: "number",
-      minimum: 10,
-      maximum: 25
-    },
-    targetPath: {
-      type: "string"
-    },
-    excludePaths: {
-      type: "array",
-      items: {
-        type: "string"
-      }
-    },
-    roundStrategy: {
-      type: "object",
-      properties: {
-        onTie: {
-          type: "string",
-          enum: ["up", "down"]
-        },
-        mode: {
-          type: "string",
-          enum: ["on", "off", "comment"]
-        }
-      },
-      required: ["onTie", "mode"]
-    },
-    transformers: {
-      type: "array",
-    },
-    properties: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-        enum: ["rem", "px", "skip"]
-      }
-    },
-    sizes: {
-      type: "object",
-      patternProperties: {
-        "^[0-9]+$": {
-          type: "object",
-          properties: {
-            px: {
-              anyOf: [
-                { type: "null" },
-                { type: "string" }
-              ]
-            },
-            rem: {
-              anyOf: [
-                { type: "null" },
-                { type: "string" }
-              ]
-            }
-          },
-          required: ["px", "rem"]
-        }
-      }
-    }
-  },
-  required: ["baseFontSize", "targetPath", "excludePaths", "roundStrategy", "properties", "sizes", "transformers"],
-  additionalProperties: false
-};
-
-// Define the function that validates the config
-export const validateConfig = (config: any): boolean => {
-  const validate = ajv.compile(schema);
-  const isValid = validate(config);
-  
-  if (!isValid) {
-    console.error("Config validation failed:");
-    console.error(validate.errors);
+  // Validate baseFontSize
+  const isValidBaseFontSize = typeof config.baseFontSize === 'number';
+  if (!isValidBaseFontSize) {
+    logError('baseFontSize should be a number.');
     return false;
   }
 
-  console.log("Config is valid.");
+  // Validate targetPath
+  const isValidTargetPath = typeof config.targetPath === 'string';
+  if (!isValidTargetPath) {
+    logError('targetPath should be a string.');
+    return false;
+  }
+
+  // Validate excludePaths
+  const isValidExcludePaths = Array.isArray(config.excludePaths) && config.excludePaths.every(path => typeof path === 'string');
+  if (!isValidExcludePaths) {
+    logError('excludePaths should be an array of strings.');
+    return false;
+  }
+
+  // Validate roundStrategy
+  const isValidRoundStrategy = config.roundStrategy &&
+    (config.roundStrategy.onTie === 'up' || config.roundStrategy.onTie === 'down') &&
+    (config.roundStrategy.mode === 'on' || config.roundStrategy.mode === 'off' || config.roundStrategy.mode === 'comment');
+  if (!isValidRoundStrategy) {
+    logError('roundStrategy is invalid. It should contain "onTie" as "up" or "down" and "mode" as "on", "off", or "comment".');
+    return false;
+  }
+
+  // Validate transformers
+  const isValidTransformers = Array.isArray(config.transformers) &&
+    config.transformers.every(transformer => typeof transformer === 'function');
+  if (!isValidTransformers) {
+    logError('transformers should be an array of functions.');
+    return false;
+  }
+
+  // Validate properties
+  const isValidProperties = typeof config.properties === 'object' &&
+    Object.entries(config.properties).every(([_, property]) =>
+      typeof property.unit === 'string' &&
+      (property.unit === 'rem' || property.unit === 'px' || property.unit === 'skip') &&
+      (property.getVariableName === undefined || typeof property.getVariableName === 'function')
+    );
+  if (!isValidProperties) {
+    logError('properties should be an object with each property containing a valid "unit" (rem or px), and optional getVariableName function.');
+    return false;
+  }
+
+  // Validate sizesInPixel
+  const isValidSizesInPixel = Array.isArray(config.sizesInPixel) &&
+    config.sizesInPixel.every(size => typeof size === 'number');
+  if (!isValidSizesInPixel) {
+    logError('sizesInPixel should be an array of numbers.');
+    return false;
+  }
+
+  // Validate getGenericVariableName (optional)
+  const isValidGenericVariableName = config.getGenericVariableName === undefined ||
+    typeof config.getGenericVariableName === 'function';
+  if (!isValidGenericVariableName) {
+    logError('getGenericVariableName should be undefined or a function.');
+    return false;
+  }
+
   return true;
 };

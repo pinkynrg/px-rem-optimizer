@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { transformCSSFileContent } from './utils';
-import { validateConfig } from './config-validator';
+import { configValidator } from './config-validator';
 import { Config } from './types';
 
 // If TypeScript is needed, require ts-node
@@ -91,7 +91,7 @@ const traverseDirectory = (directory: string, rootFolder: string, config: Config
 // Load configuration (custom or default or null if invalid custom config)
 const config = loadConfig();
 
-if (!!config && validateConfig(config)) {
+if (!!config && configValidator(config)) {
 
   // Main logic to execute the transformations
   const targetPath = process.argv[2] || config?.targetPath;

@@ -6,17 +6,13 @@ type RoundStrategy = {
 type Transformer = (value: string) => string;
 
 type PropertyUnits = {
-  [property: string]: 'px' | 'rem';
+  [property: string]: {
+    unit: 'rem' | 'px' | 'skip';
+    getVariableName?: (sizeInPx: number) => string;
+  }
 };
 
-type SizeUnits = {
-  px: string | null;
-  rem: string | null;
-};
-
-type Sizes = {
-  [key: string]: SizeUnits;
-};
+type Sizes = number[];
 
 export type Config = {
   baseFontSize: number;
@@ -25,5 +21,6 @@ export type Config = {
   roundStrategy: RoundStrategy;
   transformers: Transformer[];
   properties: PropertyUnits;
-  sizes: Sizes;
+  sizesInPixel: Sizes;
+  getGenericVariableName?: (sizeInPx: number) => string;
 };

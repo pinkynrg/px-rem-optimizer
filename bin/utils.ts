@@ -51,20 +51,20 @@ const formatVariableWithSign = (variable: string, isPositive: boolean) => {
 const roundValue = (
   value: string, 
   baseFontSize: number, 
-  sizes: Config['sizes'], 
-  roundStrategy: Config['roundStrategy']
+  sizes: Config['sizesInPixel'], 
+  roundStrategy: Config['roundStrategy'],
+  getVariableName?: ((sizeInPx: number) => string),
 ) => {
   const roundStrategyString = getRoundStrategyString(roundStrategy)
-  const sizesList = Object.keys(sizes).map(e => parseFloat(e))
   return value.replace(new RegExp(regex, 'g'), (_, value, unit) => {
     if (checkUnit(unit)) {
       const number = parseFloat(value);
       const inPx = rawConvertion(number, unit, 'px', baseFontSize);
-      const roundedInPx = getClosest(sizesList, Math.abs(inPx), number >= 0 && roundStrategyString.includes('up')) 
+      const roundedInPx = getClosest(sizes, Math.abs(inPx), number >= 0 && roundStrategyString.includes('up')) 
       const roundedInTargetUnit = rawConvertion(roundedInPx, 'px', unit, baseFontSize);
       const isPositive = number >= 0;
       const rounded = isPositive ? roundedInTargetUnit : -roundedInTargetUnit;
-      const variable = sizes.hasOwnProperty(roundedInPx) ? sizes[roundedInPx][unit] : null;
+      const variable = getVariableName ? getVariableName(roundedInPx) : null;
       const finalResult = variable ? formatVariableWithSign(variable, isPositive) : `${rounded}${unit}`
       switch (roundStrategyString) {
         case 'on_up': return finalResult
@@ -97,7 +97,7 @@ export const optimizeValue = (
 
   // find target unit from the confiig file based on the property in the config 
   const targetUnit = property in config.properties
-  ? config.properties[property as keyof typeof config.properties] as Conversions
+  ? config.properties[property as keyof typeof config.properties]['unit'] as Conversions
   : 'skip';
   
   if (targetUnit === 'skip') return value;
@@ -109,7 +109,13 @@ export const optimizeValue = (
   const convertedValue = convertValue(transformedValue, targetUnit, config.baseFontSize)
 
   // round the value to the closest value in the sizes array in the config file
-  return roundValue(convertedValue, config.baseFontSize, config.sizes, config.roundStrategy)
+  return roundValue(
+    convertedValue, 
+    config.baseFontSize, 
+    config.sizesInPixel, 
+    config.roundStrategy,
+    config.properties[property]['getVariableName'] || config.getGenericVariableName, 
+  )
 };
 
 export const transformCSSFileContent = (cssContent: string, config: Config): string => {
