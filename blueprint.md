@@ -64,8 +64,8 @@ The configuration is defined in a `px-rem-optimizer.config.ts` file.
 
 ### Example `px-rem-optimizer.config.ts`:
 
-```typescript
-export const config: Config = {
+```js
+const config = {
   "baseFontSize": 16,
   "targetPath": ".",
   "excludePaths": ["node_modules", "dist"],
@@ -73,11 +73,11 @@ export const config: Config = {
     "onTie": 'up',
     "mode": 'on'
   },
-  "getGenericVariableName": (sizeInPx: number) => {
+  "getGenericVariableName": (sizeInPx) => {
     return `--size-${sizeInPx/4}`;
   },
   "transformers": [
-    (value: string) => someStringTrasformer(value)
+    (value) => someStringTrasformer(value)
   ],
   "properties": {
     "width": { "unit": "rem" },

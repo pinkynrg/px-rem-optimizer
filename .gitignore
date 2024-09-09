@@ -1,3 +1,4 @@
 node_modules
 dist
 px-rem-optimizer.config.ts
+px-rem-optimizer.config.js
