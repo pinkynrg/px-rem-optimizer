@@ -10,7 +10,7 @@ declare global {
 type Units = 'px' | 'rem';
 type Conversions = Units | 'skip';
 
-const regex = "(-?\\d+(?:\\.\\d+)?|\\.\\d+)(px|rem)(?: /\\* tofix -?\\d+(?:px|rem) \\*/)?"
+const regex = "(-?\\d+(?:\\.\\d+)?|\\.\\d+)(px|rem)(?:\\s*/\\* tofix .*? \\*/)?"
 
 const checkUnit = (unit: any): unit is Units => {
   return unit === 'px' || unit === 'rem'
