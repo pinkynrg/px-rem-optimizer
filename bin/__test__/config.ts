@@ -38,7 +38,7 @@ export const config: Config = {
     "outline-width": { "unit": "px" },
     "box-shadow": { "unit": "px" },
     "text-shadow": { "unit": "px" },
-    "font-size": { "unit": "px" },
+    "font-size": { "unit": "rem" },
     "line-height": { "unit": "rem" },
     "letter-spacing": { "unit": "rem" },
     "word-spacing": { "unit": "rem" },
@@ -78,7 +78,6 @@ export const config: Config = {
     "shape-margin": { "unit": "rem" },
     "stroke-width": { "unit": "px" },
     "column-rule": { "unit": "px" },
-    "cursor": { "unit": "px" }
   },
   "sizesInPixel": [
     0, 
