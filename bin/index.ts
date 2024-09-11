@@ -82,7 +82,7 @@ const traverseDirectory = (directory: string, rootFolder: string, config: Config
 
     if (stat.isDirectory()) {
       traverseDirectory(fullPath, rootFolder, config);
-    } else if (stat.isFile() && (fullPath.endsWith('.css') || fullPath.endsWith('.scss'))) {
+    } else if (stat.isFile() && config.targetExtensions.some(ext => fullPath.endsWith(`.${ext}`))) {
       transformFile(fullPath, config);
     }
   });

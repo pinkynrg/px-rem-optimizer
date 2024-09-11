@@ -18,6 +18,7 @@ export type Config = {
   baseFontSize: number;
   targetPath: string;
   excludePaths: string[];
+  targetExtensions: string[];
   roundStrategy: RoundStrategy;
   transformers: Transformer[];
   properties: PropertyUnits;
