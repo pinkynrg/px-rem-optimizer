@@ -13,5 +13,7 @@
   .Target {
     grid-template-columns: 17.5rem calc(100% - 17.5rem);
     grid-template-rows: min-content  min-content auto 4rem;
+    transform: translate(1rem, 0.5rem);
+    flex: 0 1 1rem !important;
   }
 }

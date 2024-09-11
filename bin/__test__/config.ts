@@ -83,6 +83,8 @@ export const config: Config = {
     "right": { "unit": "px" },
     "bottom": { "unit": "px" },
     "left": { "unit": "px" },
+    "transform": { "unit": "rem" },
+    "flex": { "unit": "rem" },
   },
   "sizesInPixel": [
     0, 
