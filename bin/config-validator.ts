@@ -26,6 +26,13 @@ export const configValidator = (config: Config): boolean => {
     return false;
   }
 
+  // Validate excludePaths
+  const isValidTargetExtensions = Array.isArray(config.targetExtensions) && config.excludePaths.every(ext => typeof ext === 'string');
+  if (!isValidTargetExtensions) {
+    logError('targetExtensions should be an array of strings.');
+    return false;
+  }
+
   // Validate roundStrategy
   const isValidRoundStrategy = config.roundStrategy &&
     (config.roundStrategy.onTie === 'up' || config.roundStrategy.onTie === 'down') &&
