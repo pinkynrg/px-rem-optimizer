@@ -69,10 +69,10 @@ const roundValue = (
       switch (roundStrategyString) {
         case 'on_up': return finalResult
         case 'on_down': return finalResult
-        case 'comment_up': return `${number}${unit}${number !== rounded ? ` /* tofix ${finalResult} */` : ''}`
-        case 'comment_down': return `${number}${unit}${number !== rounded ? ` /* tofix ${finalResult} */` : ''}`
-        case 'off': return `${number}${unit}`
-        default: return `${number}${unit}`
+        case 'comment_up': return number !== rounded ? `${number}${unit} /* tofix ${finalResult} */` : finalResult
+        case 'comment_down': return number !== rounded ? `${number}${unit} /* tofix ${finalResult} */` : finalResult
+        case 'off': return number !== rounded ? `${number}${unit}` : finalResult
+        default: return number !== rounded ? `${number}${unit}` : finalResult
       }
     } else {
       return `${value}${unit}`
@@ -119,7 +119,7 @@ export const optimizeValue = (
 };
 
 export const transformCSSFileContent = (cssContent: string, config: Config): string => {
-  const propertyValueRegex = /([\w-]+)(\s*:\s*)([^\{\};]+);/g;
+  const propertyValueRegex = /([\w-]+)(\s*:\s*)([^\{\};\\n]+);/g;
   return cssContent.replace(propertyValueRegex, (_, property, separator, value) => {
     const convertedValue = optimizeValue(property, value, config);
     return `${property}${separator}${convertedValue};`;

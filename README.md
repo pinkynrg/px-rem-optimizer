@@ -83,7 +83,7 @@ const config = {
     "mode": 'on'
   },
   "getGenericVariableName": (sizeInPx) => {
-    return `--size-${sizeInPx/4}`;
+    return `--space-${sizeInPx/4}`;
   },
   "transformers": [
     (value) => someStringTrasformer(value)

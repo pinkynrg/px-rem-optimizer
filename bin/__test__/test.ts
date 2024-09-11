@@ -26,7 +26,7 @@ const roundingDisabled: Config = {
 const withVariables: Config = {
   ...config,
   getGenericVariableName: (sizeInPx: number) => {
-    return `--size-${sizeInPx/4}`;
+    return `--space-${sizeInPx/4}`;
   },
   properties: {
     ...config.properties,
@@ -44,6 +44,18 @@ const withVariables: Config = {
     }
   }
 }
+
+const roundingDisabledWithVariables: Config = {
+  ...config,
+  getGenericVariableName: (sizeInPx: number) => {
+    return `--space-${sizeInPx/4}`;
+  },
+  roundStrategy: {
+    mode: 'comment',
+    onTie: 'up',
+  },
+};
+
 
 describe('optimizeValue function', () => {
   const testCases: [string, string, Config, string][] = [
@@ -77,6 +89,7 @@ describe('optimizeValue function', () => {
     ['width', '-16px', roundingDisabled, '-1rem'],
     ['width', '-15px', roundingDisabled, '-0.9375rem /* tofix -1rem */'],
     ['width', '-14px', roundingDisabled, '-0.875rem /* tofix -0.75rem */'],
+    ['width', '16px', roundingDisabledWithVariables, 'var(--space-4)'],
     ['border', '-1.6px /* tofix -2000px */', roundingDisabled, '-1.6px /* tofix -2px */'],
     ['border', '-1.6px /* tofix var(-1 * --somevariable) */', roundingDisabled, '-1.6px /* tofix -2px */'],
     ['width', '16px', config, '1rem'],
@@ -95,7 +108,7 @@ describe('optimizeValue function', () => {
     ['border', '-0.0625rem;', withVariables, 'calc(-1 * var(--border-1));'],
     ['margin', '0.125rem;', withVariables, '@margin-2;'],
     ['margin', '-0.125rem;', withVariables, '(-@margin-2);'],
-    ['width', '16px;', withVariables, 'var(--size-4);']
+    ['width', '16px;', withVariables, 'var(--space-4);']
   ];
 
   testCases.forEach(([property, value, configType, expected]) => {
@@ -106,7 +119,7 @@ describe('optimizeValue function', () => {
 });
 
 describe('transformCSSFileContent function', () => {
-  ['1'].forEach((e) => {
+  ['1', '2'].forEach((e) => {
     test(`test file ${e}`, () => {
       const sourceContent = fs.readFileSync(path.resolve(__dirname, `./${e}-source.scss`), 'utf8');
       const destinationContent = fs.readFileSync(path.resolve(__dirname, `./${e}-destination.scss`), 'utf8');

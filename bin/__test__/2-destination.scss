@@ -1,0 +1,12 @@
+.UrlContainer {
+  display: grid;
+  margin-top: 24px;
+  gap: 1rem;
+  grid-template-columns: 1fr auto;
+
+  .PreviewButton {
+    // TODO: to be fixed with new ui-library components
+    height: 2.5rem;
+    margin-top: 24px;
+  }
+}
