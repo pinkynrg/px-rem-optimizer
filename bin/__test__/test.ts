@@ -119,7 +119,7 @@ describe('optimizeValue function', () => {
 });
 
 describe('transformCSSFileContent function', () => {
-  ['1', '2'].forEach((e) => {
+  ['1','2'].forEach((e) => {
     test(`test file ${e}`, () => {
       const sourceContent = fs.readFileSync(path.resolve(__dirname, `./${e}-source.scss`), 'utf8');
       const destinationContent = fs.readFileSync(path.resolve(__dirname, `./${e}-destination.scss`), 'utf8');

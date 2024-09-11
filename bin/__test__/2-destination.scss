@@ -9,4 +9,9 @@
     height: 2.5rem;
     margin-top: 24px;
   }
+
+  .Target {
+    grid-template-columns: 17.5rem calc(100% - 17.5rem);
+    grid-template-rows: min-content  min-content auto 4rem;
+  }
 }

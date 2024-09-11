@@ -119,7 +119,7 @@ export const optimizeValue = (
 };
 
 export const transformCSSFileContent = (cssContent: string, config: Config): string => {
-  const propertyValueRegex = /([\w-]+)(\s*:\s*)([^\{\};\\n]+);/g;
+  const propertyValueRegex = /([\w-]+)(\s*:\s*)([^\{\};\n]+);/g;
   return cssContent.replace(propertyValueRegex, (_, property, separator, value) => {
     const convertedValue = optimizeValue(property, value, config);
     return `${property}${separator}${convertedValue};`;
