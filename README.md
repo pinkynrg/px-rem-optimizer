@@ -134,6 +134,7 @@ const config = {
     "grid-template-rows": { "unit": "rem" },
     "grid-auto-columns": { "unit": "rem" },
     "grid-auto-rows": { "unit": "rem" },
+    "grid-gap": { "unit": "rem" },
     "background-position": { "unit": "px" },
     "background-size": { "unit": "px" },
     "border-spacing": { "unit": "px" },
@@ -161,7 +162,12 @@ const config = {
     "shape-margin": { "unit": "rem" },
     "stroke-width": { "unit": "px" },
     "column-rule": { "unit": "px" },
-    "cursor": { "unit": "px" }
+    "top": { "unit": "px" },
+    "right": { "unit": "px" },
+    "bottom": { "unit": "px" },
+    "left": { "unit": "px" },
+    "transform": { "unit": "rem" },
+    "flex": { "unit": "rem" },
   },
   "sizesInPixel": [
     0,
