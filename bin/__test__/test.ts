@@ -111,9 +111,9 @@ describe('optimizeValue function', () => {
     ['width', '16px;', withVariables, 'var(--space-4);']
   ];
 
-  testCases.forEach(([property, value, configType, expected]) => {
+  testCases.forEach(([property, value, config, expected]) => {
     test(`${property}: ${value} => ${expected}`, () => {
-      expect(optimizeValue(property, value, configType)).toBe(expected);
+      expect(optimizeValue({property, value, config})).toBe(expected);
     });
   });
 });

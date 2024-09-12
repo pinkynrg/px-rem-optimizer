@@ -54,8 +54,12 @@ export const configValidator = (config: Config): boolean => {
   const isValidProperties = typeof config.properties === 'object' &&
     Object.entries(config.properties).every(([_, property]) =>
       typeof property.unit === 'string' &&
-      (property.unit === 'rem' || property.unit === 'px' || property.unit === 'skip') &&
-      (property.getVariableName === undefined || typeof property.getVariableName === 'function')
+      (property.unit === 'rem' || property.unit === 'px') &&
+      (property.getVariableName === undefined || typeof property.getVariableName === 'function') &&
+      (property.transform === undefined || typeof property.round === 'boolean') &&
+      (property.convert === undefined || typeof property.convert === 'boolean') &&
+      (property.round === undefined || typeof property.round === 'boolean')
+      
     );
   if (!isValidProperties) {
     logError('properties should be an object with each property containing a valid "unit" (rem or px), and optional getVariableName function.');
