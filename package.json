@@ -1,6 +1,6 @@
 {
   "name": "px-rem-optimizer",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "description": "This script transforms CSS length units (e.g., px to rem) based on a configuration, ensuring responsive scaling and accessibility by adapting to changes in base font size.",
   "main": "index.js",
   "bin": {
