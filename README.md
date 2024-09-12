@@ -78,6 +78,7 @@ const config = {
   "baseFontSize": 16,
   "targetPath": ".",
   "excludePaths": ["node_modules", "dist"],
+  "targetExtensions": ["css", "scss", "sass", "less"],
   "roundStrategy": {
     "onTie": 'up',
     "mode": 'on'
